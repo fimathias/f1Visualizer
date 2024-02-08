@@ -1,11 +1,11 @@
 # This handles the visual part of the track
-from imports import pd, np, plt
+from imports import pd, np, plt, os
 import helper
 
 
 
 # Creates a pyplot of a track in a session, then overlays the corner numbers onto the track layout
-def trackCorners(session):
+def trackPlt(session):
     session.load()
     
     lap = session.laps.pick_fastest()
@@ -59,8 +59,23 @@ def trackCorners(session):
        
         
     plt.title(session.event['Location'])
-    #plt.xticks([])
-    #plt.yticks([])
+    plt.xticks([])
+    plt.yticks([])
     plt.axis('equal')
     return plt
-   
+
+  
+def trackImage(session):
+    script_dir = os.path.dirname(os.path.realpath(__file__))
+    media_dir = os.path.join(script_dir, "..", "media", "track")
+    
+    plt = trackPlt(session)
+    name = session.event["OfficialEventName"]
+    
+    # Ensure the directory exists, create if not
+    os.makedirs(media_dir, exist_ok=True)
+    
+    # Save the plot to the specified folder
+    plt.savefig(os.path.join(media_dir, f'{name}.png'))
+    plt.close()
+    

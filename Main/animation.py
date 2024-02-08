@@ -10,7 +10,7 @@ def animateDrivers(session, drivers = None):
     circuit_info = session.get_circuit_info()
     # Convert the rotation angle from degrees to radian.
     trackAngle = circuit_info.rotation / 180 * np.pi
-    trackPlot = track.trackCorners(session)
+    trackPlot = track.trackPlt(session)
     
     # Get all drivers of the session   
     if drivers is None:
@@ -23,7 +23,7 @@ def animateDrivers(session, drivers = None):
     
 
     # Set starting frame for telemetry
-    startingFrame = 15000
+    startingFrame = 8000
     frames = None
     
     for driver in drivers:
@@ -61,6 +61,8 @@ def animateDrivers(session, drivers = None):
         # Set the limits for the x and y axes to cover the entire range of coordinates        
         ax.set_xlim(min_x, max_x)
         ax.set_ylim(min_y, max_y)
+        
+        # Track image as background
 
     
     # Create a figure and axis object
