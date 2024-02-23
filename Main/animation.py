@@ -1,4 +1,4 @@
-from imports import animation, plt, np
+from imports import animation, plt, np, pd
 import api
 import helper
 import track
@@ -22,14 +22,17 @@ def animateDrivers(session, drivers = None):
     plt.close()
     
 
-    # Set starting frame for telemetry
+    # Set starting frame for telemetry (based on official start time)
+    startTime = session.session_start_time - pd.Timedelta(minutes=1)
+    
     startingFrame = 8000
     frames = None
-    
+
     for driver in drivers:
         driverN = helper.getDriverNumber(session, driver)
         telemetryData[driverN] = telemetryData[driverN].iloc[startingFrame:]
         frames = len(telemetryData[driverN])
+
     
 
     # Create a function to update the plot

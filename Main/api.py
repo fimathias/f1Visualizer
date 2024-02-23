@@ -15,11 +15,11 @@ def getRemainingSchedule():
     events = fastf1.get_events_remaining()
     return(events)
 
-def getEvent(year: int, gp: str):
+def getEvent(year: int, gp):
     event = fastf1.get_event(year, gp)
     return event
 
-def getSession(year: int, gp: str, session: str):
+def getSession(year: int, gp, session: str):
     session = fastf1.get_session(year, gp, session)    
     return session
 
