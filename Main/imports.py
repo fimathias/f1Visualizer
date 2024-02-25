@@ -9,3 +9,4 @@ import matplotlib.animation as animation
 import fastf1.plotting
 import os
 import pygame
+import csv

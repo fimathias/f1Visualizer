@@ -38,5 +38,11 @@ def getTelemetry(session: str, driverN = None):
     else:
         return session.pos_data[driverN]
     
+def getCarData(session: str, driverN = None):
+    if driverN is None:
+        return session.car_data
+    else:
+        return session.car_data[driverN]
+    
 def plotting():
     return fastf1.plotting
