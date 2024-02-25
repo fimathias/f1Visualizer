@@ -3,7 +3,7 @@ from imports import fastf1, os
 from helper import getAllDrivers
 from api import getSession
 from animation import animateDrivers
-from data import exportData
+from data import exportGeneralLapData
 
 
 def mainGUI():
@@ -51,14 +51,14 @@ def mainGUI():
     for i in selectedDrivers:
         print(i)
         
-    print("To animate the session, press 1\nTo export the telemetry data, press 2")
+    print("To animate the session, press 1\nTo export the lap data, press 2")
     
     function = int(input("\nInput: "))
     
     if function == 1:
         animateDrivers(session,selectedDrivers)
     elif function == 2:
-        exportData(session, selectedDrivers)
+        exportGeneralLapData(session, selectedDrivers)
         
        
     
