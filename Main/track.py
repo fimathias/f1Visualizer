@@ -6,6 +6,7 @@ import helper
 
 # Creates a pyplot of a track in a session, then overlays the corner numbers onto the track layout
 def trackPlt(session):
+    # TODO Create new plot object with px to work with other functions
     session.load()
     
     lap = session.laps.pick_fastest()

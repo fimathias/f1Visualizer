@@ -3,7 +3,7 @@ from imports import fastf1, os, datetime, px
 from helper import getAllDrivers
 from api import getEvent, getSession, getTelemetryFiltered
 from dataExporting import exportGeneralLapData
-from frameFunctions import getTelemetryAtTime, plotTrackPositionsAtTime
+from frameFunctions import getTelemetryAtTime, trackMapFrame
 import globalVariables
 
 
@@ -29,6 +29,9 @@ def getSessionSettings():
     globalVariables.session.load()
     os.system('cls' if os.name == 'nt' else 'clear')
     
+    globalVariables.startTime = globalVariables.season['Session5DateUtc'][globalVariables.eventN]
+    print(f"The selected event took part at \n{globalVariables.startTime}")
+    
     print("The following drivers took part in the session:\n")
     globalVariables.drivers = getAllDrivers(globalVariables.session)
     for i in globalVariables.drivers:
@@ -42,6 +45,7 @@ def getSessionSettings():
             globalVariables.selectedDrivers.append(userInput)
         else:
             break
+    
     
     if not globalVariables.selectedDrivers:
         globalVariables.selectedDrivers = globalVariables.drivers

@@ -14,21 +14,39 @@ def startDashApp():
     app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
     app.layout = html.Div([
-        html.H1(children='Title of Dash App', style={'textAlign':'center'}),
-        dcc.Graph(id='trackMap')
+        html.H1(children=globalVariables.season['OfficialEventName'][globalVariables.eventN], style={'textAlign':'center'}),
+        html.Div([
+            html.P(id='timeDisplay'),
+        ]),
+        dcc.Graph(id='trackMap'),
+        dcc.Interval(
+            id='intervalComponent',
+            interval=1*1000, # in milliseconds
+            n_intervals=0
+        )
     ])
-
+    
+    # Time updating
+    @app.callback(
+        Output('timeDisplay', 'children'),
+        Input('intervalComponent', 'n_intervals')
+    )
+    def updateTimeDisplay(n):
+        time = globalVariables.currentTime
+        return time
+    
+    # Track Map updating
     @app.callback(
         Output('trackMap', 'figure'),
-        Input('trackMap', 'id')
+        Input('intervalComponent', 'n_intervals')
     )
-    
-    def update_track_map(_):      
-        data = api.getTelemetryFiltered()
+    def updateTrackMap(n):              
+        frameFunctions.trackMapFrame()
         
-        trackMap = frameFunctions.plotTrackPositionsAtTime(data)
+        # Increment the global currentTime variable by one second
+        globalVariables.currentTime += datetime.timedelta(seconds=1)
 
-        return trackMap
+        return globalVariables.trackMap
 
     app.run_server()
 
@@ -39,20 +57,20 @@ if __name__ == "__main__":
     getSettings.getSessionSettings()
     getSettings.getFunctionality()
     
-    globalVariables.currentTime = datetime.datetime(2021,5,23,14,43,4)
+    # Placeholder for testing
+    globalVariables.currentTime = globalVariables.startTime
+    globalVariables.currentTime += datetime.timedelta(minutes=3)   
     
+    # Check functionality
     if globalVariables.function == 1:
+        api.getTelemetryFiltered()
         startDashApp()
     elif globalVariables.function == 2:
         dataExporting.exportGeneralLapData(globalVariables.session, globalVariables.selectedDrivers)
     elif globalVariables.function == 0:
         # USE FOR AD-HOC TESTING, NOT FINAL
         
-        data = api.getTelemetryFiltered()
-        
-        trackMap = frameFunctions.plotTrackPositionsAtTime(data)
-        
-        trackMap.show()
+        helper.getMinMax()
     
     
     

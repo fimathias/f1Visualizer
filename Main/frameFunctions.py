@@ -6,34 +6,38 @@ import helper
 import track
 import globalVariables
 
-def getTelemetryAtTime(telemetry: api.getTelemetryFiltered):
+def getTelemetryAtTime():
     # Gets the current telemetry at a time point
-    telemetryAtTime = helper.getFramesFromTime(telemetry)
+    telemetryAtTime = helper.getFramesFromTime(globalVariables.telemetryData)
 
     return(telemetryAtTime)
 
-def plotTrackPositionsAtTime(telemetry: api.getTelemetryFiltered):
+def trackMapFrame():
     # TODO Add Colors and names for the driver points
     
-    data = getTelemetryAtTime(telemetry)
+    data = getTelemetryAtTime()
     
     # Rotating the circuit
-    circuit_info = globalVariables.session.get_circuit_info()
+    globalVariables.circuitInfo = globalVariables.session.get_circuit_info()
     # Convert the rotation angle from degrees to radian.
-    trackAngle = circuit_info.rotation / 180 * np.pi
+    globalVariables.trackAngle = globalVariables.circuitInfo.rotation / 180 * np.pi
     
     fig = px.scatter()
+    
+    # Define min and max of plot
+    helper.getMinMax()
+    
+    fig.update_xaxes(range=[globalVariables.x_min, globalVariables.x_max], fixedrange=True)
+    fig.update_yaxes(range=[globalVariables.y_min, globalVariables.y_max], fixedrange=True)
         
     for driverN in data:
         xyCoords = (data[driverN]['X'], data[driverN]['Y'])
         
-        print(xyCoords)
-        
-        rotatedCoords = helper.rotate(xyCoords, angle=trackAngle)
+        rotatedCoords = helper.rotate(xyCoords, angle=globalVariables.trackAngle)
         
         fig.add_trace(go.Scatter(x=[rotatedCoords[0]], y=[rotatedCoords[1]], mode='markers', name=f'Driver {driverN}'))
     
     # Return the scatter plot
-    return fig
+    globalVariables.trackMap = fig
         
         

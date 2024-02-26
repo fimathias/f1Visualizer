@@ -43,11 +43,11 @@ def getTelemetry(session: str, driverN = None):
 def getTelemetryFiltered():
     # Returns a telemetry object keyed with driver numbers and filtered with selected frequency
     data = {}
-    for driver in globalVariables.drivers:
+    for driver in globalVariables.selectedDrivers:
         driverN = helper.getDriverNumber(driver)
         data[driverN] = globalVariables.session.laps.pick_driver(driver).get_telemetry(frequency=1)
         
-    return data        
+    globalVariables.telemetryData = data        
     
 def getLapData(session: str, driverN = None):
     if driverN is None:
