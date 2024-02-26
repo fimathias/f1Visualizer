@@ -1,3 +1,5 @@
+# TO BE DELETED, DONT USE
+
 from imports import animation, plt, np, pd
 import api
 import helper
@@ -17,23 +19,12 @@ def animateDrivers(session, drivers = None):
         drivers = helper.getAllDrivers(session)
     
     # Telemetry data from session
-    telemetryData = api.getTelemetry(session)
+    telemetryData = api.getTelemetryFiltered(session, drivers)
     min_x, max_x, min_y, max_y = helper.getMinMaxFromTrack(trackPlot)
     plt.close()
     
 
-    # Set starting frame for telemetry (based on official start time)
-    startTime = session.session_start_time - pd.Timedelta(minutes=1)
-    
-    startingFrame = 8000
-    frames = None
-
-    for driver in drivers:
-        driverN = helper.getDriverNumber(session, driver)
-        telemetryData[driverN] = telemetryData[driverN].iloc[startingFrame:]
-        frames = len(telemetryData[driverN])
-
-    
+    frames = None    
 
     # Create a function to update the plot
     def update_plot(frame):

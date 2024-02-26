@@ -1,5 +1,6 @@
 # This provides helper functions to the other parts
-from imports import np, pd
+from imports import np, pd, datetime
+import globalVariables
 
 def rotate(xy, *, angle):
     rot_mat = np.array([[np.cos(angle), np.sin(angle)],
@@ -10,22 +11,9 @@ def getAllDrivers(session):
     drivers = pd.unique(session.laps['Driver'])
     return drivers
 
-def getDriverNumber(session, driver: int):
-    driver = session.get_driver(driver)
+def getDriverNumber(driver):
+    driver = globalVariables.session.get_driver(driver)
     return driver["DriverNumber"]
-
-
-# DONT USE
-def getMinMaxFromSession(session):
-    lap = session.laps.pick_fastest()
-    pos = lap.get_pos_data()
-    
-    min_x = pos['X'].min()
-    max_x = pos['X'].max()
-    min_y = pos['Y'].min()
-    max_y = pos['Y'].max()
-    
-    return min_x, max_x, min_y, max_y
 
 def getMinMaxFromTrack(track):
     ax = track.gca()
@@ -35,3 +23,26 @@ def getMinMaxFromTrack(track):
     y_min, y_max = ax.get_ylim()
     
     return x_min, x_max, y_min, y_max
+
+def getFramesFromTime(data):
+    # Takes a datetime object and a data object as inputs
+    # Returns the same object but with only the closest data points
+    
+    dataAtTime = {}
+    timeString = globalVariables.currentTime.strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
+    
+    for i in data:
+        dataSingle = data[i]
+        dataSingle['Date'] = pd.to_datetime(dataSingle['Date'])
+        
+        time_timestamp = pd.Timestamp(timeString)
+
+        # Find the closest timestamp in telemetry data
+        closest_entry = min(dataSingle['Date'], key=lambda x: abs(x - time_timestamp))
+        
+        # Retrieve telemetry data at the closest timestamp for each driver
+        dataAtTime[i] = dataSingle[dataSingle['Date'] == closest_entry].iloc[0]
+
+    return(dataAtTime)
+    
+    

@@ -1,5 +1,7 @@
 # This is for handling the api part of the code
 from imports import fastf1, datetime, pd
+import helper
+import globalVariables
 
 
 # Variables
@@ -37,6 +39,15 @@ def getTelemetry(session: str, driverN = None):
         return session.pos_data
     else:
         return session.pos_data[driverN]
+    
+def getTelemetryFiltered():
+    # Returns a telemetry object keyed with driver numbers and filtered with selected frequency
+    data = {}
+    for driver in globalVariables.drivers:
+        driverN = helper.getDriverNumber(driver)
+        data[driverN] = globalVariables.session.laps.pick_driver(driver).get_telemetry(frequency=1)
+        
+    return data        
     
 def getLapData(session: str, driverN = None):
     if driverN is None:
