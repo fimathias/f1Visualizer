@@ -33,14 +33,8 @@ def getNextEvent():
     nextEvent = getEvent(currentSeason, nextGP)
     
     return nextEvent
-
-def getTelemetry(session: str, driverN = None):
-    if driverN is None:
-        return session.pos_data
-    else:
-        return session.pos_data[driverN]
     
-def getTelemetryFiltered():
+def getTelemetry():
     # Returns a telemetry object keyed with driver numbers and filtered with selected frequency
     data = {}
     for driver in globalVariables.selectedDrivers:
@@ -49,11 +43,10 @@ def getTelemetryFiltered():
         
     globalVariables.telemetryData = data        
     
-def getLapData(session: str, driverN = None):
-    if driverN is None:
-        return session.laps.get_car_data()
-    else:
-        return session.laps.pick_driver(driverN).get_car_data()
+def getLapData():
+    # Generates a object that has data on a lap per lap basis (positions, timings, sc etc.)
+    globalVariables.session.load(laps=True)
+    globalVariables.lapData = globalVariables.session.laps
     
 def plotting():
     return fastf1.plotting

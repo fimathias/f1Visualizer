@@ -1,7 +1,7 @@
 # Finds a certain session to use
 from imports import fastf1, os, datetime, px
 from helper import getAllDrivers
-from api import getEvent, getSession, getTelemetryFiltered
+from api import getEvent, getSession
 from dataExporting import exportGeneralLapData
 from frameFunctions import getTelemetryAtTime, trackMapFrame
 import globalVariables

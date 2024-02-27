@@ -15,6 +15,7 @@ def startDashApp():
         html.H1(children=globalVariables.season['OfficialEventName'][globalVariables.eventN], style={'textAlign':'center'}),
         html.Div([
             html.P(id='timeDisplay'),
+            html.P(id='lapCounter')
         ]),
         dcc.Graph(id='trackMap'),
         dcc.Interval(
@@ -32,6 +33,17 @@ def startDashApp():
     def updateTimeDisplay(n):
         time = globalVariables.currentTime
         return time
+    
+    # Lap Counter updating
+    @app.callback(
+        Output('lapCounter', 'children'),
+        Input('intervalComponent', 'n_intervals')
+    )
+    def updateLapCounter(n):
+        # TODO Add current lap of total laps
+        helper.getCurrentLap()
+        lap = globalVariables.lapCurrent
+        return lap
     
     # Track Map updating
     @app.callback(
@@ -57,26 +69,28 @@ if __name__ == "__main__":
     
     # Placeholder for testing
     globalVariables.currentTime = globalVariables.startTime
-    globalVariables.currentTime += datetime.timedelta(minutes=3)   
+    globalVariables.currentTime += datetime.timedelta(minutes=75)   
     
     # Check functionality
     if globalVariables.function == 1:
-        api.getTelemetryFiltered()
+        api.getTelemetry()
+        api.getLapData()
+        api.helper.getLapTimings()
+        
         startDashApp()
     elif globalVariables.function == 2:
         dataExporting.exportGeneralLapData(globalVariables.session, globalVariables.selectedDrivers)
     elif globalVariables.function == 0:
         # USE FOR AD-HOC TESTING, NOT FINAL
-        api.getTelemetryFiltered()
-        print(globalVariables.telemetryData)
+        api.getLapData()
+        api.helper.getLapTimings()
+        api.getTelemetry()
+        
+        helper.getCurrentLap()
+        
+        print(globalVariables.lapCurrent)
     
-    
-    
-    
-    
-    
-    
-    
+
     
     
     

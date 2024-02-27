@@ -1,5 +1,6 @@
 # This provides helper functions to the other parts
 from imports import np, pd, datetime
+import api
 import globalVariables
 
 def rotate(xy, *, angle):
@@ -12,10 +13,12 @@ def getAllDrivers(session):
     return drivers
 
 def getDriverNumber(driver):
+    # Gets the driver number from driver abbreviation
     driver = globalVariables.session.get_driver(driver)
     return driver["DriverNumber"]
 
 def getDriverAbbr(driverN):
+    # Gets the driver abbreviation from driver number
     driver = globalVariables.session.get_driver(driverN)
     return driver["Abbreviation"]
 
@@ -36,12 +39,7 @@ def getMinMax():
     globalVariables.x_max = fastestLap['X'].max() + xDeltaPct
 
     globalVariables.y_min = fastestLap['Y'].min() - yDeltaPct
-    globalVariables.y_max = fastestLap['Y'].max() + yDeltaPct
-    
-    
-    #print("here are the min and max values")
-    #print(globalVariables.x_min, globalVariables.x_max, globalVariables.y_min, globalVariables.y_max)
-    
+    globalVariables.y_max = fastestLap['Y'].max() + yDeltaPct    
 
 def getFramesFromTime(data):
     # Takes a datetime object and a data object as inputs
@@ -63,5 +61,42 @@ def getFramesFromTime(data):
         dataAtTime[i] = dataSingle[dataSingle['Date'] == closest_entry].iloc[0]
 
     return(dataAtTime)
+
+def getLapTimings():
+    # Goes through the lapdata object to find at which points in time the leading driver started the next lap
     
+    data = globalVariables.lapData
+    data['LapStartDate'] = pd.to_datetime(data['LapStartDate'])
     
+    # Check if 'LapStartTime' is of type Timedelta
+    if isinstance(data['LapStartDate'].iloc[0], pd.Timedelta):
+        # Convert Timedelta to string and format to keep only the time part
+        data['LapStartDate'] = data['LapStartDate'].apply(lambda x: str(x).split()[-1])
+    else:
+        # Convert Timestamp to string and format to keep only the time part
+        data['LapStartDate'] = data['LapStartDate'].dt.time.astype(str).apply(lambda x: x.split()[-1])
+      
+    lapStartTimes = data.groupby('LapNumber')['LapStartDate'].min()
+    
+    globalVariables.lapTimings = lapStartTimes
+
+def getCurrentLap():    
+    # Gets the current lap from the current time
+    currentTime = pd.Timestamp(globalVariables.currentTime)
+    
+    lap_numbers = sorted(globalVariables.lapTimings.keys())
+    
+    for lap_number in lap_numbers:
+        lap_time_str = globalVariables.lapTimings[lap_number]
+        
+        # Adjust format string to include milliseconds
+        lap_time = pd.to_datetime(lap_time_str, format="%H:%M:%S.%f").time()
+        lap_time_timestamp = pd.Timestamp.combine(currentTime.date(), lap_time)
+        
+        if lap_time_timestamp > currentTime:
+            globalVariables.lapCurrent = lap_number - 1  # Previous lap
+            return
+    
+    # If the current time is beyond all lap times, set lapCurrent to the last lap number
+    
+    globalVariables.lapCurrent = len(globalVariables.lapTimings)       

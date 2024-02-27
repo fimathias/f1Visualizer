@@ -31,5 +31,8 @@ trackMap = None
 figure2 = None
 figure3 = None
 
-# Driver data
+# Data
 telemetryData = None
+lapData = None
+lapTimings = None
+lapCurrent = 0
