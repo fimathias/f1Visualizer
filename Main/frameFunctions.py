@@ -17,15 +17,20 @@ def trackMapFrame():
     
     data = getTelemetryAtTime()
     
+    # Check if track exists, if not generate it
+    if not globalVariables.trackMapEmpty:
+        track.generateTrackMapEmpty()
+    
     # Rotating the circuit
     globalVariables.circuitInfo = globalVariables.session.get_circuit_info()
     # Convert the rotation angle from degrees to radian.
     globalVariables.trackAngle = globalVariables.circuitInfo.rotation / 180 * np.pi
     
-    fig = px.scatter()
+    fig = go.Figure(data=globalVariables.trackMapEmpty.data)
     
-    # Define min and max of plot
-    helper.getMinMax()
+    # Define min and max of plot (if not exists)
+    if not globalVariables.x_max:
+        helper.getMinMax()
     
     fig.update_xaxes(range=[globalVariables.x_min, globalVariables.x_max], fixedrange=True)
     fig.update_yaxes(range=[globalVariables.y_min, globalVariables.y_max], fixedrange=True)

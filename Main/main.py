@@ -70,7 +70,9 @@ if __name__ == "__main__":
     elif globalVariables.function == 0:
         # USE FOR AD-HOC TESTING, NOT FINAL
         
-        helper.getMinMax()
+        track.generateTrackMapEmpty()
+        
+        globalVariables.trackMapEmpty.show()
     
     
     

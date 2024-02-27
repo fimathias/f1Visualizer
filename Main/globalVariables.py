@@ -26,6 +26,7 @@ trackAngle = None
 function = None
 
 # The following objects are the figures available (px or go object for use in Dash)
+trackMapEmpty = None
 trackMap = None
 figure2 = None
 figure3 = None
