@@ -43,7 +43,7 @@ def generateTrackMapEmpty():
     
     
     # Replace last 5 data points with first 5 data points, fixes clipping at end of data
-    rotatedTrack.iloc[-5:] = rotatedTrack.iloc[:5].values
+    rotatedTrack.iloc[-10:] = rotatedTrack.iloc[:10].values
     
     fig.add_trace(go.Scatter(x=rotatedTrack['X'], y=rotatedTrack['Y'], mode='lines'))
     
