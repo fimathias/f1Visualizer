@@ -64,7 +64,6 @@ def getFramesFromTime(data):
 
 def getLapTimings():
     # Goes through the lapdata object to find at which points in time the leading driver started the next lap
-    
     data = globalVariables.lapData
     data['LapStartDate'] = pd.to_datetime(data['LapStartDate'])
     
@@ -79,6 +78,31 @@ def getLapTimings():
     lapStartTimes = data.groupby('LapNumber')['LapStartDate'].min()
     
     globalVariables.lapTimings = lapStartTimes
+    
+def getLapStandings():
+    # Generates a object keyed on laps that contains driver standings from said lap
+    data = globalVariables.lapData
+    dataSorted = data.sort_values(by=['LapStartDate', 'Position'])
+    
+    lapStandings = {}
+    
+    # Iterate over the DataFrame rows
+    for index, row in dataSorted.iterrows():
+        lap_number = int(row['LapNumber'])
+        # Check if 'Position' value is NaN
+        position = None
+        if not pd.isna(row['Position']):
+            position = int(row['Position'])
+        driver = row['Driver']
+        
+        # Check if the lap number already exists in the dictionary
+        if lap_number in lapStandings:
+            lapStandings[lap_number].append((position, driver))
+        else:
+            lapStandings[lap_number] = [(position, driver)]
+            
+    globalVariables.lapStandings = lapStandings
+    
 
 def getCurrentLap():    
     # Gets the current lap from the current time

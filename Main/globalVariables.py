@@ -28,6 +28,7 @@ function = None
 # The following objects are the figures available (px or go object for use in Dash)
 trackMapEmpty = None
 trackMap = None
+standingsTable = None
 figure2 = None
 figure3 = None
 
@@ -35,4 +36,5 @@ figure3 = None
 telemetryData = None
 lapData = None
 lapTimings = None
+lapStandings = None
 lapCurrent = 0

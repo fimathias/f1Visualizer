@@ -3,7 +3,7 @@ import helper
 import dataExporting
 import getSettings
 import frameFunctions
-from imports import html, dcc, dash, datetime, Input, Output
+from imports import html, dcc, dash, datetime, Input, Output, State
 import globalVariables
 
 def startDashApp():
@@ -18,6 +18,7 @@ def startDashApp():
             html.P(id='lapCounter')
         ]),
         dcc.Graph(id='trackMap'),
+        globalVariables.standingsTable,
         dcc.Interval(
             id='intervalComponent',
             interval=1*1000, # in milliseconds
@@ -32,6 +33,10 @@ def startDashApp():
     )
     def updateTimeDisplay(n):
         time = globalVariables.currentTime
+        
+        # Increment the global currentTime variable by one second
+        globalVariables.currentTime += datetime.timedelta(seconds=1)
+        
         return time
     
     # Lap Counter updating
@@ -48,15 +53,22 @@ def startDashApp():
     # Track Map updating
     @app.callback(
         Output('trackMap', 'figure'),
-        Input('intervalComponent', 'n_intervals')
+        Input('intervalComponent', 'n_intervals'),
     )
     def updateTrackMap(n):              
         frameFunctions.trackMapFrame()
-        
-        # Increment the global currentTime variable by one second
-        globalVariables.currentTime += datetime.timedelta(seconds=1)
-
         return globalVariables.trackMap
+    
+    # Update standings table
+    # TODO Fix standings table
+    @app.callback(
+        Output('standingsTable', 'data'),
+        Input('intervalComponent', 'n_intervals'),
+        State('standingsTable', 'data'),
+    )
+    def updateStandingsTable(n):
+        frameFunctions.positionFrames()
+        print("updating standings")
 
     app.run_server()
 
@@ -69,26 +81,31 @@ if __name__ == "__main__":
     
     # Placeholder for testing
     globalVariables.currentTime = globalVariables.startTime
-    globalVariables.currentTime += datetime.timedelta(minutes=75)   
+    globalVariables.currentTime += datetime.timedelta(minutes=30)   
     
     # Check functionality
     if globalVariables.function == 1:
         api.getTelemetry()
         api.getLapData()
         api.helper.getLapTimings()
+        helper.getLapStandings()
+        helper.getCurrentLap()
+        frameFunctions.positionFrames()
         
         startDashApp()
+        
     elif globalVariables.function == 2:
         dataExporting.exportGeneralLapData(globalVariables.session, globalVariables.selectedDrivers)
     elif globalVariables.function == 0:
         # USE FOR AD-HOC TESTING, NOT FINAL
         api.getLapData()
         api.helper.getLapTimings()
-        api.getTelemetry()
-        
+        api.getTelemetry()        
         helper.getCurrentLap()
         
-        print(globalVariables.lapCurrent)
+        helper.getLapStandings()
+        
+        frameFunctions.positionFrames()
     
 
     

@@ -1,6 +1,6 @@
 # These functions are for generating specific data based on time
 # Used in "real-time" visualization of races.
-from imports import datetime, np, plt, px, go
+from imports import datetime, np, plt, px, go, dash_table, pd
 import api
 import helper
 import track
@@ -65,5 +65,28 @@ def trackMapFrame():
     globalVariables.trackMap = fig
         
 def positionFrames():
-    # TODO Add a data table about position data etc.
-    None
+    # Creates the table figure for the current standings
+    try:
+        data = globalVariables.lapStandings[int(globalVariables.lapCurrent)]
+        positions = [entry[0] for entry in data]
+        driver_names = [entry[1] for entry in data]
+    except:
+        data = "No data available yet"
+        positions = "---"
+        driver_names = "---"
+    
+    # Create a DataFrame from the lap standings data
+    lap_standings_df = pd.DataFrame({'Position': positions, 'Driver Name': driver_names})
+
+    # Sort the DataFrame by position
+    lap_standings_df = lap_standings_df.sort_values(by="Position")
+    
+    # Creating the DataTable object
+    standingsTable = dash_table.DataTable(
+        id='lap-standings-table',
+        columns=[{"name": i, "id": i} for i in lap_standings_df.columns],
+        data=lap_standings_df.to_dict('records')
+    )
+    
+    globalVariables.standingsTable = standingsTable
+    
