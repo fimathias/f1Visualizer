@@ -1,11 +1,9 @@
 import api
-import track
-import animation
 import helper
 import dataExporting
 import getSettings
 import frameFunctions
-from imports import fastf1, html, dcc, dash, datetime, Input, Output, px
+from imports import html, dcc, dash, datetime, Input, Output
 import globalVariables
 
 def startDashApp():
@@ -69,10 +67,8 @@ if __name__ == "__main__":
         dataExporting.exportGeneralLapData(globalVariables.session, globalVariables.selectedDrivers)
     elif globalVariables.function == 0:
         # USE FOR AD-HOC TESTING, NOT FINAL
-        
-        track.generateTrackMapEmpty()
-        
-        globalVariables.trackMapEmpty.show()
+        api.getTelemetryFiltered()
+        print(globalVariables.telemetryData)
     
     
     

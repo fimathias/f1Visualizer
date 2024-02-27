@@ -13,8 +13,7 @@ def getTelemetryAtTime():
     return(telemetryAtTime)
 
 def trackMapFrame():
-    # TODO Add Colors and names for the driver points
-    
+    # Get data from current time point
     data = getTelemetryAtTime()
     
     # Check if track exists, if not generate it
@@ -36,13 +35,35 @@ def trackMapFrame():
     fig.update_yaxes(range=[globalVariables.y_min, globalVariables.y_max], fixedrange=True)
         
     for driverN in data:
-        xyCoords = (data[driverN]['X'], data[driverN]['Y'])
+        # Handle color data
+        driver = helper.getDriverAbbr(str(driverN))
+        try:
+            driverColor = api.plotting().driver_color(driver)
+        except:
+            driverColor = "#000000"
         
+        xyCoords = (data[driverN]['X'], data[driverN]['Y'])
         rotatedCoords = helper.rotate(xyCoords, angle=globalVariables.trackAngle)
         
-        fig.add_trace(go.Scatter(x=[rotatedCoords[0]], y=[rotatedCoords[1]], mode='markers', name=f'Driver {driverN}'))
+        fig.add_trace(go.Scatter(
+            x=[rotatedCoords[0]],
+            y=[rotatedCoords[1]],
+            mode='markers',
+            name=f'{driver} ({driverN})',
+            marker=dict(color=driverColor)
+        ))
+    
+    # Configure basic layout
+    layout = go.Layout(
+        xaxis=dict(showticklabels=False),
+        yaxis=dict(showticklabels=False)
+    )
+    
+    fig.update_layout(layout)
     
     # Return the scatter plot
     globalVariables.trackMap = fig
         
-        
+def positionFrames():
+    # TODO Add a data table about position data etc.
+    None

@@ -15,6 +15,10 @@ def getDriverNumber(driver):
     driver = globalVariables.session.get_driver(driver)
     return driver["DriverNumber"]
 
+def getDriverAbbr(driverN):
+    driver = globalVariables.session.get_driver(driverN)
+    return driver["Abbreviation"]
+
 def getMinMax():
     # Returns the min and max for the x and y coordinates based on the fastest lap
     fastestLap = globalVariables.session.laps.pick_fastest().get_telemetry(frequency=1)
